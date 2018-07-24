@@ -2,6 +2,8 @@ defmodule Mix.Tasks.EctoData.Migrate do
   use Mix.Task
   import Mix.Ecto
 
+  alias Mix.Project
+
   @shortdoc "Runs the repository data migrations"
 
   @moduledoc """
@@ -55,7 +57,7 @@ defmodule Mix.Tasks.EctoData.Migrate do
   """
   @spec ensure_data_migrations_path(Ecto.Repo.t()) :: Ecto.Repo.t()
   def ensure_data_migrations_path(repo) do
-    with false <- Mix.Project.umbrella?(),
+    with false <- Project.umbrella?(),
          path = Path.join(source_repo_priv(repo), "data_migrations"),
          false <- File.dir?(path),
          do: raise_missing_data_migrations(Path.relative_to_cwd(path), repo)
