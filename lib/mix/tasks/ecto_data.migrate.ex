@@ -29,7 +29,7 @@ defmodule Mix.Tasks.EctoData.Migrate do
   """
 
   @doc false
-  def run(args, migrator \\ &Ecto.Migrator.run/3) do
+  def run(args, migrator \\ &EctoData.Migrator.run/4) do
     repos = parse_repo(args)
     opts = [all: true]
 
@@ -42,9 +42,9 @@ defmodule Mix.Tasks.EctoData.Migrate do
 
       migrated =
         if function_exported?(pool, :unboxed_run, 2) do
-          pool.unboxed_run(repo, fn -> migrator.(repo, :up, opts) end)
+          pool.unboxed_run(repo, fn -> migrator.(repo, data_migrations_path(repo), :up, opts) end)
         else
-          migrator.(repo, :up, opts)
+          migrator.(repo, data_migrations_path(repo), :up, opts)
         end
 
       pid && repo.stop(pid)
@@ -57,10 +57,10 @@ defmodule Mix.Tasks.EctoData.Migrate do
   """
   @spec ensure_data_migrations_path(Ecto.Repo.t()) :: Ecto.Repo.t()
   def ensure_data_migrations_path(repo) do
-    with false <- Project.umbrella?(),
-         path = Path.join(source_repo_priv(repo), "data_migrations"),
+    with false <- Mix.Project.umbrella?(),
+         path = Path.relative_to(data_migrations_path(repo), Mix.Project.app_path()),
          false <- File.dir?(path),
-         do: raise_missing_data_migrations(Path.relative_to_cwd(path), repo)
+         do: raise_missing_data_migrations(path, repo)
 
     repo
   end
@@ -78,5 +78,13 @@ defmodule Mix.Tasks.EctoData.Migrate do
     make sure your repository has been properly configured
     and the configured path exists.
     """)
+  end
+
+  @doc """
+  Gets the migrations path from a repository.
+  """
+  @spec data_migrations_path(Ecto.Repo.t()) :: String.t()
+  def data_migrations_path(repo) do
+    Path.join(source_repo_priv(repo), "data_migrations")
   end
 end
