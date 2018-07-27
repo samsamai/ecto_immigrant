@@ -1,9 +1,7 @@
-defmodule Mix.Tasks.EctoData.Migrate do
+defmodule Mix.Tasks.EctoImmigrant.Migrate do
   use Mix.Task
   import Mix.Ecto
-  import Mix.EctoData
-
-  alias Mix.Project
+  import Mix.EctoImmigrant
 
   @shortdoc "Runs the repository data migrations"
 
@@ -30,7 +28,7 @@ defmodule Mix.Tasks.EctoData.Migrate do
   """
 
   @doc false
-  def run(args, migrator \\ &EctoData.Migrator.run/4) do
+  def run(args, migrator \\ &EctoImmigrant.Migrator.run/4) do
     repos = parse_repo(args)
     opts = [all: true]
 

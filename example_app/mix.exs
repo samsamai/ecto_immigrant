@@ -30,7 +30,7 @@ defmodule ExampleApp.MixProject do
     [
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
-      {:ecto_data, path: ".."},
+      {:ecto_immigrant, path: ".."},
       {:postgrex, ">= 0.0.0"}
     ]
   end

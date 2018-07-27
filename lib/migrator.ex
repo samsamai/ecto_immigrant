@@ -1,11 +1,11 @@
-defmodule EctoData.Migrator do
+defmodule EctoImmigrant.Migrator do
   @moduledoc """
   This module provides the data migration API.
 
   ## Example
 
       defmodule MyApp.MigrationExample do
-        use EctoData.Migration
+        use EctoImmigrant.Migration
 
         def up do
           execute "CREATE TABLE users(id serial PRIMARY_KEY, username text)"
@@ -13,14 +13,14 @@ defmodule EctoData.Migrator do
 
       end
 
-      EctoData.Migrator.up(Repo, 20080906120000, MyApp.MigrationExample)
+      EctoImmigrant.Migrator.up(Repo, 20080906120000, MyApp.MigrationExample)
 
   """
 
   require Logger
 
   alias Ecto.Migration.Runner
-  alias EctoData.DataMigration
+  alias EctoImmigrant.DataMigration
 
   @doc """
   Gets all migrated versions.
@@ -67,7 +67,7 @@ defmodule EctoData.Migrator do
   defp do_up(repo, version, module, opts) do
     run_maybe_in_transaction(repo, module, fn ->
       attempt(repo, module, :forward, :up, :up, opts) ||
-        raise EctoData.MigrationError,
+        raise EctoImmigrant.MigrationError,
               "#{inspect(module)} does not implement a `up/0` function"
 
       verbose_data_migration(repo, "update data migrations", fn ->
@@ -104,7 +104,7 @@ defmodule EctoData.Migrator do
   during the migration process. The other option is to pass a list of tuples
   that identify the version number and migration modules to be run, for example:
 
-      EctoData.Migrator.run(Repo, [{0, MyApp.Migration1}, {1, MyApp.Migration2}, ...], :up, opts)
+      EctoImmigrant.Migrator.run(Repo, [{0, MyApp.Migration1}, {1, MyApp.Migration2}, ...], :up, opts)
 
   A strategy must be given as an option.
 
@@ -210,12 +210,12 @@ defmodule EctoData.Migrator do
 
   defp ensure_no_duplication([{version, name, _} | t]) do
     if List.keyfind(t, version, 0) do
-      raise EctoData.MigrationError,
+      raise EctoImmigrant.MigrationError,
             "data migrations can't be executed, data migration version #{version} is duplicated"
     end
 
     if List.keyfind(t, name, 1) do
-      raise EctoData.MigrationError,
+      raise EctoImmigrant.MigrationError,
             "data migrations can't be executed, data migration name #{name} is duplicated"
     end
 
@@ -269,19 +269,19 @@ defmodule EctoData.Migrator do
   end
 
   defp raise_no_migration_in_file(file) do
-    raise EctoData.MigrationError,
+    raise EctoImmigrant.MigrationError,
           "file #{Path.relative_to_cwd(file)} is not an Ecto.Migration"
   end
 
   defp raise_no_migration_in_module(mod) do
-    raise EctoData.MigrationError,
-          "module #{inspect(mod)} is not an EctoData.Migration"
+    raise EctoImmigrant.MigrationError,
+          "module #{inspect(mod)} is not an EctoImmigrant.Migration"
   end
 
   defp log(false, _msg), do: :ok
   defp log(level, msg), do: Logger.log(level, msg)
 end
 
-defmodule EctoData.MigrationError do
+defmodule EctoImmigrant.MigrationError do
   defexception [:message]
 end

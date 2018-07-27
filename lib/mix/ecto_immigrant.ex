@@ -1,6 +1,6 @@
-defmodule Mix.EctoData do
+defmodule Mix.EctoImmigrant do
   import Mix.Ecto
-  # Conveniences for writing Mix.Tasks in EctoData.
+  # Conveniences for writing Mix.Tasks in EctoImmigrant.
   @moduledoc false
 
   @doc """

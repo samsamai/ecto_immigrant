@@ -1,7 +1,7 @@
-defmodule Mix.Tasks.EctoData.Migrations do
+defmodule Mix.Tasks.EctoImmigrant.Migrations do
   use Mix.Task
   import Mix.Ecto
-  import Mix.EctoData
+  import Mix.EctoImmigrant
 
   @shortdoc "Displays the repository data migration status"
 
@@ -31,7 +31,7 @@ defmodule Mix.Tasks.EctoData.Migrations do
   """
 
   @doc false
-  def run(args, migrations \\ &EctoData.Migrator.migrations/2, puts \\ &IO.puts/1) do
+  def run(args, migrations \\ &EctoImmigrant.Migrator.migrations/2, puts \\ &IO.puts/1) do
     repos = parse_repo(args)
 
     result =

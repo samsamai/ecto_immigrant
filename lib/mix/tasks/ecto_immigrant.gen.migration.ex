@@ -1,10 +1,10 @@
-defmodule Mix.Tasks.EctoData.Gen.Migration do
+defmodule Mix.Tasks.EctoImmigrant.Gen.Migration do
   use Mix.Task
 
   import Macro, only: [camelize: 1, underscore: 1]
   import Mix.Generator
   import Mix.Ecto
-  import Mix.EctoData
+  import Mix.EctoImmigrant
 
   @shortdoc "Generates a new data migration for the repo"
 
@@ -80,7 +80,7 @@ defmodule Mix.Tasks.EctoData.Gen.Migration do
 
   embed_template(:data_migration, """
   defmodule <%= inspect @mod %> do
-    use EctoData.Migration
+    use EctoImmigrant.Migration
 
     def up do
   <%= @change %>

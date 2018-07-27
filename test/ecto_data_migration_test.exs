@@ -1,8 +1,8 @@
-defmodule EctoDataMigrationTest do
+defmodule EctoImmigrantMigrationTest do
   use ExUnit.Case
-  doctest EctoDataMigration
+  doctest EctoImmigrantMigration
 
   test "greets the world" do
-    assert EctoDataMigration.hello() == :world
+    assert EctoImmigrantMigration.hello() == :world
   end
 end
