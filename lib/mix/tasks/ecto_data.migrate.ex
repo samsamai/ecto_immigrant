@@ -1,6 +1,7 @@
 defmodule Mix.Tasks.EctoData.Migrate do
   use Mix.Task
   import Mix.Ecto
+  import Mix.EctoData
 
   alias Mix.Project
 
@@ -78,13 +79,5 @@ defmodule Mix.Tasks.EctoData.Migrate do
     make sure your repository has been properly configured
     and the configured path exists.
     """)
-  end
-
-  @doc """
-  Gets the migrations path from a repository.
-  """
-  @spec data_migrations_path(Ecto.Repo.t()) :: String.t()
-  def data_migrations_path(repo) do
-    Path.join(source_repo_priv(repo), "data_migrations")
   end
 end

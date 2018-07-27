@@ -71,7 +71,7 @@ defmodule EctoData.Migrator do
     run_maybe_in_transaction(repo, module, fn ->
       attempt(repo, module, :forward, :up, :up, opts) ||
         attempt(repo, module, :forward, :change, :up, opts) ||
-        raise Ecto.MigrationError,
+        raise EctoData.MigrationError,
               "#{inspect(module)} does not implement a `up/0` or `change/0` function"
 
       verbose_data_migration(repo, "update schema migrations", fn ->
@@ -80,16 +80,16 @@ defmodule EctoData.Migrator do
     end)
   end
 
-  @doc """
-  Runs a down migration on the given repository.
+  # @doc """
+  # Runs a down migration on the given repository.
 
-  ## Options
+  # ## Options
 
-    * `:log` - the level to use for logging. Defaults to `:info`.
-      Can be any of `Logger.level/0` values or `false`.
-    * `:prefix` - the prefix to run the migrations on
+  #   * `:log` - the level to use for logging. Defaults to `:info`.
+  #     Can be any of `Logger.level/0` values or `false`.
+  #   * `:prefix` - the prefix to run the migrations on
 
-  """
+  # """
   # @spec down(Ecto.Repo.t(), integer, module) :: :ok | :already_down | no_return
   # def down(repo, version, module, opts \\ []) do
   #   versions = migrated_versions(repo, opts)
@@ -170,11 +170,11 @@ defmodule EctoData.Migrator do
     end
   end
 
-  @doc """
-  Returns an array of tuples as the migration status of the given repo,
-  without actually running any migrations.
+  # @doc """
+  # Returns an array of tuples as the migration status of the given repo,
+  # without actually running any migrations.
 
-  """
+  # """
   # def migrations(repo, directory) do
   #   versions = migrated_versions(repo)
 

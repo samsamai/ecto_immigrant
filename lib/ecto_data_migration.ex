@@ -16,3 +16,7 @@ defmodule EctoDataMigration do
     :world
   end
 end
+
+defmodule EctoData.MigrationError do
+  defexception [:message]
+end
