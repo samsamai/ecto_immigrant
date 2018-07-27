@@ -13,7 +13,7 @@ defmodule EctoData.DataMigration do
 
   @opts [timeout: :infinity, log: false]
 
-  def ensure_schema_migrations_table!(repo, prefix) do
+  def ensure_data_migrations_table!(repo, prefix) do
     adapter = repo.__adapter__
     create_data_migrations_table(adapter, repo, prefix)
   end

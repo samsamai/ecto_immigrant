@@ -11,7 +11,7 @@ defmodule EctoData.Migration do
   @doc false
   defmacro __before_compile__(_env) do
     quote do
-      def __migration__,
+      def __data_migration__,
         do: [disable_ddl_transaction: @disable_ddl_transaction]
     end
   end
