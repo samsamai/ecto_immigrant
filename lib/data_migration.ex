@@ -1,5 +1,5 @@
 defmodule EctoData.DataMigration do
-  # Define a schema that works with the a table, which is schema_migrations by default
+  # Define a schema that works with the a table, which is data_migrations by default
   @moduledoc false
   use Ecto.Schema
 

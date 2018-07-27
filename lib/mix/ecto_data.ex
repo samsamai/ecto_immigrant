@@ -1,10 +1,10 @@
 defmodule Mix.EctoData do
   import Mix.Ecto
-  # Conveniences for writing Mix.Tasks in Ecto.
+  # Conveniences for writing Mix.Tasks in EctoData.
   @moduledoc false
 
   @doc """
-  Gets the migrations path from a repository.
+  Gets the data migrations path from a repository.
   """
   @spec data_migrations_path(Ecto.Repo.t()) :: String.t()
   def data_migrations_path(repo) do

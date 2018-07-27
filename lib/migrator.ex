@@ -281,3 +281,7 @@ defmodule EctoData.Migrator do
   defp log(false, _msg), do: :ok
   defp log(level, msg), do: Logger.log(level, msg)
 end
+
+defmodule EctoData.MigrationError do
+  defexception [:message]
+end
