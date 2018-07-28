@@ -120,12 +120,10 @@ defmodule EctoImmigrant.Migrator do
   def run(repo, migration_source, direction, opts) do
     versions = migrated_versions(repo, opts)
 
-    cond do
-      opts[:all] ->
-        run_all(repo, versions, migration_source, direction, opts)
-
-      true ->
-        raise ArgumentError, "expected :all strategy"
+    if opts[:all] do
+      run_all(repo, versions, migration_source, direction, opts)
+    else
+      raise ArgumentError, "expected :all strategy"
     end
   end
 

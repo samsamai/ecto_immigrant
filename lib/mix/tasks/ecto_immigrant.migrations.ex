@@ -50,18 +50,21 @@ defmodule Mix.Tasks.EctoImmigrant.Migrations do
 
           Status    Data migration ID    Data migration Name
         -------------------------------------------------------
-        """ <>
-          Enum.map_join(repo_status, "\n", fn {status, number, description} ->
-            status =
-              case status do
-                :up -> "up  "
-                :down -> "down"
-              end
-
-            "  #{status}      #{number}       #{description}"
-          end) <> "\n"
+        """ <> data_migrations_rows(repo_status)
       end)
 
     puts.(Enum.join(result, "\n"))
+  end
+
+  defp data_migrations_rows(repo_status) do
+    Enum.map_join(repo_status, "\n", fn {status, number, description} ->
+      status =
+        case status do
+          :up -> "up  "
+          :down -> "down"
+        end
+
+      "  #{status}      #{number}       #{description}"
+    end) <> "\n"
   end
 end
