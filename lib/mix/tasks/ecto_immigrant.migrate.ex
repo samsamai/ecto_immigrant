@@ -21,9 +21,7 @@ defmodule Mix.Tasks.EctoImmigrant.Migrate do
 
   ## Examples
 
-      mix ecto.data.migrate
-
-  ## Command line options
+      mix ecto_immigrant.migrate
 
   """
 

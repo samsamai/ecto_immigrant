@@ -1,6 +1,6 @@
 # Ecto Immigrant
 
-This packaged helps to do data migrations in your ecto-backed elixir application.
+This package helps you to do data migrations in your ecto-backed elixir application.
 
 It keeps track of which data migrations are run and stores this in the database, same as how ecto does schema migrations. In fact all the code for this has been borrowed from ecto and changed slightly to work for data migrations, all credit goes to the ecto team.
 
