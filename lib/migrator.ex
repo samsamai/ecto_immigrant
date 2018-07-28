@@ -247,7 +247,7 @@ defmodule EctoImmigrant.Migrator do
         Could not #{reason}. This error usually happens due to the following:
 
           * The database does not exist
-          * The "schema_migrations" table, which Ecto uses for managing
+          * The "data_migrations" table, which Ecto uses for managing
             migrations, was defined by another library
 
         To fix the first issue, run "mix ecto.create".
@@ -268,7 +268,7 @@ defmodule EctoImmigrant.Migrator do
 
   defp raise_no_migration_in_file(file) do
     raise EctoImmigrant.MigrationError,
-          "file #{Path.relative_to_cwd(file)} is not an Ecto.Migration"
+          "file #{Path.relative_to_cwd(file)} is not an EctoImmigrant.Migration"
   end
 
   defp raise_no_migration_in_module(mod) do

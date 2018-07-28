@@ -26,7 +26,7 @@ defmodule Mix.EctoImmigrant do
 
   defp raise_missing_data_migrations(path, repo) do
     Mix.raise("""
-    Could not find ta damigrations directory #{inspect(path)}
+    Could not find data migrations directory #{inspect(path)}
     for repo #{inspect(repo)}.
 
     This may be because you are in a new project and the
