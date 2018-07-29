@@ -4,6 +4,7 @@ defmodule EctoImmigrant.MixProject do
   def project do
     [
       app: :ecto_immigrant,
+      description: "Data migrations for Ecto",
       version: "0.1.0",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
@@ -23,7 +24,7 @@ defmodule EctoImmigrant.MixProject do
   defp deps do
     [
       {:ecto, "~> 2.1"},
-      {:ex_doc, "~> 0.17", only: :docs},
+      {:ex_doc, "~> 0.18.0", only: :dev, runtime: false},
       {:credo, "~> 0.9.1", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 0.6", only: :dev, runtime: false}
     ]

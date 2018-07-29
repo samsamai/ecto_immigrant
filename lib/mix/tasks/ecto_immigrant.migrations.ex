@@ -21,8 +21,8 @@ defmodule Mix.Tasks.EctoImmigrant.Migrations do
 
   ## Examples
 
-      mix ecto_data.migrations
-      mix ecto_data.migrations -r Custom.Repo
+      mix ecto_immigrant.migrations
+      mix ecto_immigrant.migrations -r Custom.Repo
 
   ## Command line options
 
