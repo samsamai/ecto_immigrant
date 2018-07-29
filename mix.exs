@@ -4,7 +4,7 @@ defmodule EctoImmigrant.MixProject do
   def project do
     [
       app: :ecto_immigrant,
-      description: "Data migrations for Ecto",
+      description: "Data migrations for your ecto-backed elixir application",
       version: "0.1.0",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
