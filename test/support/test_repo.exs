@@ -1,12 +1,27 @@
 defmodule EctoImmigrant.TestAdapter do
   @behaviour Ecto.Adapter
+  @behaviour Ecto.Adapter.Queryable
+  @behaviour Ecto.Adapter.Schema
+  @behaviour Ecto.Adapter.Transaction
 
   alias Ecto.Migration.SchemaMigration
 
+  @impl Ecto.Adapter
   defmacro __before_compile__(_opts), do: :ok
 
+  @impl Ecto.Adapter
+  def init(opts) do
+    {:ok, child_spec(:repo, opts), %{}}
+  end
+
+  @impl Ecto.Adapter
   def ensure_all_started(_, _) do
     {:ok, []}
+  end
+
+  @impl Ecto.Adapter
+  def checkout(_adapter_meta, _config, fun) do
+    fun.()
   end
 
   def child_spec(_repo, opts) do
@@ -21,25 +36,30 @@ defmodule EctoImmigrant.TestAdapter do
 
   ## Types
 
+  @impl Ecto.Adapter
   def loaders(:binary_id, type), do: [Ecto.UUID, type]
   def loaders(_primitive, type), do: [type]
 
+  @impl Ecto.Adapter
   def dumpers(:binary_id, type), do: [type, Ecto.UUID]
   def dumpers(_primitive, type), do: [type]
 
+  @impl Ecto.Adapter.Schema
   def autogenerate(:id), do: nil
   def autogenerate(:embed_id), do: Ecto.UUID.autogenerate()
   def autogenerate(:binary_id), do: Ecto.UUID.autogenerate()
 
   ## Queryable
 
+  @impl Ecto.Adapter.Queryable
   def prepare(operation, query), do: {:nocache, {operation, query}}
 
-  def execute(_repo, _, {:nocache, {:all, %{from: {_, SchemaMigration}}}}, _, _, _) do
+  @impl Ecto.Adapter.Queryable
+  def execute(_repo, _, {:nocache, {:all, %{from: {_, SchemaMigration}}}}, _, _) do
     {length(migrated_versions()), Enum.map(migrated_versions(), &List.wrap/1)}
   end
 
-  def execute(_repo, _, {:nocache, {:all, _}}, _, _, _) do
+  def execute(_repo, _, {:nocache, {:all, _}}, _, _) do
     Process.get(:test_repo_all_results) || {1, [[1]]}
   end
 
@@ -48,25 +68,31 @@ defmodule EctoImmigrant.TestAdapter do
         _meta,
         {:nocache, {:delete_all, %{from: {_, SchemaMigration}}}},
         [version],
-        _,
         _
       ) do
     Process.put(:migrated_versions, List.delete(migrated_versions(), version))
     {1, nil}
   end
 
-  def execute(_repo, meta, {:nocache, {op, %{from: {source, _}}}}, _params, _preprocess, _opts) do
+  def execute(_repo, meta, {:nocache, {op, %{from: {source, _}}}}, _params, _opts) do
     send(self(), {op, {meta.prefix, source}})
     {1, nil}
   end
 
+  @impl Ecto.Adapter.Queryable
+  def stream(_adapter_meta, _query_meta, _query_cache, _params, _opts) do
+    []
+  end
+
   ## Schema
 
+  @impl Ecto.Adapter.Schema
   def insert_all(_repo, %{source: source}, _header, rows, _on_conflict, _returning, _opts) do
     send(self(), {:insert_all, source, rows})
     {1, nil}
   end
 
+  @impl Ecto.Adapter.Schema
   def insert(_repo, %{source: {nil, "schema_migrations"}}, val, _, _, _) do
     version = Keyword.fetch!(val, :version)
     Process.put(:migrated_versions, [version | migrated_versions()])
@@ -79,6 +105,7 @@ defmodule EctoImmigrant.TestAdapter do
   def insert(_repo, %{context: {:invalid, _} = res}, _fields, _on_conflict, _return, _opts),
     do: res
 
+  @impl Ecto.Adapter.Schema
   # Notice the list of changes is never empty.
   def update(_repo, %{context: nil, source: source}, [_ | _], _filters, return, _opts),
     do: send(self(), {:update, source}) && {:ok, Enum.zip(return, 1..length(return))}
@@ -86,11 +113,13 @@ defmodule EctoImmigrant.TestAdapter do
   def update(_repo, %{context: {:invalid, _} = res}, [_ | _], _filters, _return, _opts),
     do: res
 
+  @impl Ecto.Adapter.Schema
   def delete(_repo, meta, _filter, _opts),
     do: send(self(), {:delete, meta.source}) && {:ok, []}
 
   ## Transactions
 
+  @impl Ecto.Adapter.Transaction
   def transaction(_repo, _opts, fun) do
     # Makes transactions "trackable" in tests
     send(self(), {:transaction, fun})
@@ -103,6 +132,12 @@ defmodule EctoImmigrant.TestAdapter do
     end
   end
 
+  @impl Ecto.Adapter.Transaction
+  def in_transaction?(_adapter_meta) do
+    true
+  end
+
+  @impl Ecto.Adapter.Transaction
   def rollback(_repo, value) do
     send(self(), {:rollback, value})
     throw({:ecto_rollback, value})

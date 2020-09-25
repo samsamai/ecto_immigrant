@@ -61,8 +61,8 @@ defmodule EctoImmigrant.MigratorTest do
         :ok = up(TestRepo, 0, UpMigration)
       end)
 
-    assert output =~ "== Running EctoImmigrant.MigratorTest.UpMigration.up/0 forward"
-    assert output =~ ~r"== Migrated in \d.\ds"
+    assert output =~ "== Running  EctoImmigrant.MigratorTest.UpMigration.up/0 forward"
+    assert output =~ ~r"== Migrated  in \d.\ds"
   end
 
   test "up invokes the repository adapter with up commands" do

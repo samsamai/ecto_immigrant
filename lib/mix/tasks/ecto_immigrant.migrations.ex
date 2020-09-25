@@ -38,11 +38,9 @@ defmodule Mix.Tasks.EctoImmigrant.Migrations do
       Enum.map(repos, fn repo ->
         ensure_repo(repo, args)
         ensure_data_migrations_path(repo)
-        {:ok, pid, _} = ensure_started(repo, all: true)
+        Mix.Task.run("app.start")
 
         repo_status = migrations.(repo, data_migrations_path(repo))
-
-        pid && repo.stop(pid)
 
         """
 

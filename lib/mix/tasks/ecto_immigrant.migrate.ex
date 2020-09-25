@@ -33,19 +33,16 @@ defmodule Mix.Tasks.EctoImmigrant.Migrate do
     Enum.each(repos, fn repo ->
       ensure_repo(repo, args)
       ensure_data_migrations_path(repo)
-      {:ok, pid, apps} = ensure_started(repo, opts)
+      Mix.Task.run("app.start")
+      repo.start_link(opts)
 
       pool = repo.config[:pool]
 
-      migrated =
-        if function_exported?(pool, :unboxed_run, 2) do
-          pool.unboxed_run(repo, fn -> migrator.(repo, data_migrations_path(repo), :up, opts) end)
-        else
-          migrator.(repo, data_migrations_path(repo), :up, opts)
-        end
-
-      pid && repo.stop(pid)
-      restart_apps_if_migrated(apps, migrated)
+      if function_exported?(pool, :unboxed_run, 2) do
+        pool.unboxed_run(repo, fn -> migrator.(repo, data_migrations_path(repo), :up, opts) end)
+      else
+        migrator.(repo, data_migrations_path(repo), :up, opts)
+      end
     end)
   end
 end
