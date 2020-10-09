@@ -66,7 +66,7 @@ defmodule EctoImmigrant.Migrator do
 
   defp do_up(repo, version, module, opts) do
     run_maybe_in_transaction(repo, module, fn ->
-      attempt(repo, module, :forward, :up, :up, opts) ||
+      attempt(repo, version, module, :forward, :up, :up, opts) ||
         raise EctoImmigrant.MigrationError,
               "#{inspect(module)} does not implement a `up/0` function"
 
@@ -89,9 +89,9 @@ defmodule EctoImmigrant.Migrator do
     end
   end
 
-  defp attempt(repo, module, direction, operation, reference, opts) do
+  defp attempt(repo, version, module, direction, operation, reference, opts) do
     if Code.ensure_loaded?(module) and function_exported?(module, operation, 0) do
-      Runner.run(repo, repo.config(), nil, module, direction, operation, reference, opts)
+      Runner.run(repo, repo.config(), version, module, direction, operation, reference, opts)
       :ok
     end
   end
