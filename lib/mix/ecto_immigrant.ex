@@ -1,5 +1,4 @@
 defmodule Mix.EctoImmigrant do
-  import Mix.Ecto
   # Conveniences for writing Mix.Tasks in EctoImmigrant.
   @moduledoc false
 
@@ -8,7 +7,7 @@ defmodule Mix.EctoImmigrant do
   """
   @spec data_migrations_path(Ecto.Repo.t()) :: String.t()
   def data_migrations_path(repo) do
-    Path.join(source_repo_priv(repo), "data_migrations")
+    Path.join(Mix.EctoSQL.source_repo_priv(repo), "data_migrations")
   end
 
   @doc """
