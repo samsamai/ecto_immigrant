@@ -91,7 +91,7 @@ defmodule EctoImmigrant.Migrator do
 
   defp attempt(repo, module, direction, operation, reference, opts) do
     if Code.ensure_loaded?(module) and function_exported?(module, operation, 0) do
-      Runner.run(repo, nil, module, direction, operation, reference, opts)
+      Runner.run(repo, repo.config(), nil, module, direction, operation, reference, opts)
       :ok
     end
   end
