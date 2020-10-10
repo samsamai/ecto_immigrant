@@ -6,9 +6,11 @@ defmodule EctoImmigrant.Migrator do
 
       defmodule MyApp.MigrationExample do
         use EctoImmigrant.Migration
+        alias MyApp.Repo
+        alias MyApp.Person
 
         def up do
-          execute "CREATE TABLE users(id serial PRIMARY_KEY, username text)"
+          Repo.insert(%Person{first_name: "John", last_name: "Doe", age: 78})
         end
 
       end
