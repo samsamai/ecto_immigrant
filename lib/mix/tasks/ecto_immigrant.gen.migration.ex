@@ -16,7 +16,7 @@ defmodule Mix.Tasks.EctoImmigrant.Gen.Migration do
 
   ## Examples
 
-      mix ecto_immigrant.gen.migration add_posts_table
+      mix ecto_immigrant.gen.migration add_admin_to_users_table
 
   The generated migration filename will be prefixed with the current
   timestamp in UTC which is used for versioning and ordering.

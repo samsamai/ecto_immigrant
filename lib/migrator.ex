@@ -6,9 +6,11 @@ defmodule EctoImmigrant.Migrator do
 
       defmodule MyApp.MigrationExample do
         use EctoImmigrant.Migration
+        alias MyApp.Repo
+        alias MyApp.Person
 
         def up do
-          execute "CREATE TABLE users(id serial PRIMARY_KEY, username text)"
+          Repo.insert(%Person{first_name: "John", last_name: "Doe", age: 78})
         end
 
       end
@@ -66,7 +68,7 @@ defmodule EctoImmigrant.Migrator do
 
   defp do_up(repo, version, module, opts) do
     run_maybe_in_transaction(repo, module, fn ->
-      attempt(repo, module, :forward, :up, :up, opts) ||
+      attempt(repo, version, module, :forward, :up, :up, opts) ||
         raise EctoImmigrant.MigrationError,
               "#{inspect(module)} does not implement a `up/0` function"
 
@@ -89,9 +91,9 @@ defmodule EctoImmigrant.Migrator do
     end
   end
 
-  defp attempt(repo, module, direction, operation, reference, opts) do
+  defp attempt(repo, version, module, direction, operation, reference, opts) do
     if Code.ensure_loaded?(module) and function_exported?(module, operation, 0) do
-      Runner.run(repo, repo.config(), nil, module, direction, operation, reference, opts)
+      Runner.run(repo, repo.config(), version, module, direction, operation, reference, opts)
       :ok
     end
   end
@@ -230,7 +232,7 @@ defmodule EctoImmigrant.Migrator do
   end
 
   defp extract_module(file, _name) do
-    modules = Code.load_file(file)
+    modules = Code.require_file(file)
 
     case Enum.find(modules, &is_data_migration_module?/1) do
       {mod, _bin} -> mod
@@ -262,7 +264,7 @@ defmodule EctoImmigrant.Migrator do
         The full error report is shown below.
         """)
 
-        reraise error, System.stacktrace()
+        reraise error, __STACKTRACE__
     end
   end
 

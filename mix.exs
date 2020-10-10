@@ -1,13 +1,16 @@
 defmodule EctoImmigrant.MixProject do
   use Mix.Project
 
+  @version "0.2.0"
+
   def project do
     [
       app: :ecto_immigrant,
       description: "Data migrations for your ecto-backed elixir application",
-      version: "0.1.0",
-      elixir: "~> 1.6",
+      version: @version,
+      elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
+      description: description(),
       deps: deps(),
       package: package()
     ]
@@ -25,9 +28,9 @@ defmodule EctoImmigrant.MixProject do
     [
       {:ecto, "~> 3.5"},
       {:ecto_sql, "~> 3.5"},
-      {:ex_doc, "~> 0.18.0", only: :dev, runtime: false},
-      {:credo, "~> 0.9.1", only: [:dev, :test], runtime: false},
-      {:mix_test_watch, "~> 0.6", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.22", only: :dev, runtime: false},
+      {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false}
     ]
   end
 
@@ -37,5 +40,11 @@ defmodule EctoImmigrant.MixProject do
       licenses: ["Apache 2"],
       links: %{"GitHub" => "https://github.com/samsamai/ecto_immigrant"}
     ]
+  end
+
+  defp description do
+    """
+    Data migrations for your ecto-backed elixir application.
+    """
   end
 end

@@ -33,12 +33,14 @@ defmodule Mix.Tasks.EctoImmigrant.Migrations do
   @doc false
   def run(args, migrations \\ &EctoImmigrant.Migrator.migrations/2, puts \\ &IO.puts/1) do
     repos = parse_repo(args)
+    opts = [all: true]
 
     result =
       Enum.map(repos, fn repo ->
         ensure_repo(repo, args)
         ensure_data_migrations_path(repo)
         Mix.Task.run("app.start")
+        repo.start_link(opts)
 
         repo_status = migrations.(repo, data_migrations_path(repo))
 

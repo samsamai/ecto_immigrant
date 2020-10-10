@@ -18,8 +18,7 @@ defmodule EctoImmigrant.Migration do
         end
       end
 
-  Note data migrations have only an `up/0` which
-  `up/0` is used to update your data.
+  Note data migrations have only an `up/0`, which is used to update your data.
 
   EctoImmigrant provides some mix tasks to help developers work with migrations:
 
