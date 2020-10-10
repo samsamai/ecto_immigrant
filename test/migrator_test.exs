@@ -61,8 +61,8 @@ defmodule EctoImmigrant.MigratorTest do
         :ok = up(TestRepo, 0, UpMigration)
       end)
 
-    assert output =~ "== Running  EctoImmigrant.MigratorTest.UpMigration.up/0 forward"
-    assert output =~ ~r"== Migrated  in \d.\ds"
+    assert output =~ "== Running 0 EctoImmigrant.MigratorTest.UpMigration.up/0 forward"
+    assert output =~ ~r"== Migrated 0 in \d.\ds"
   end
 
   test "up invokes the repository adapter with up commands" do
@@ -128,26 +128,6 @@ defmodule EctoImmigrant.MigratorTest do
       assert run(TestRepo, path, :up, all: true, log: false) == []
     end)
   end
-
-  # test "migrations will give the up and down migration status" do
-  #   in_tmp(fn path ->
-  #     create_migration("1_up_migration_1.exs")
-  #     create_migration("2_up_migration_2.exs")
-  #     create_migration("3_up_migration_3.exs")
-  #     create_migration("4_down_migration_1.exs")
-  #     create_migration("5_down_migration_2.exs")
-
-  #     expected_result = [
-  #       {:up, 1, "up_migration_1"},
-  #       {:up, 2, "up_migration_2"},
-  #       {:up, 3, "up_migration_3"},
-  #       {:down, 4, "down_migration_1"},
-  #       {:down, 5, "down_migration_2"}
-  #     ]
-
-  #     assert migrations(TestRepo, path) == expected_result
-  #   end)
-  # end
 
   test "migrations run inside a transaction if the adapter supports ddl transactions" do
     capture_log(fn ->

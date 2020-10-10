@@ -10,8 +10,9 @@ defmodule EctoImmigrant.TestAdapter do
   defmacro __before_compile__(_opts), do: :ok
 
   @impl Ecto.Adapter
-  def init(opts) do
-    {:ok, child_spec(:repo, opts), %{}}
+  def init(_opts) do
+    child_spec = Supervisor.child_spec({Task, fn -> :timer.sleep(:infinity) end}, [])
+    {:ok, child_spec, %{meta: :meta}}
   end
 
   @impl Ecto.Adapter
@@ -22,16 +23,6 @@ defmodule EctoImmigrant.TestAdapter do
   @impl Ecto.Adapter
   def checkout(_adapter_meta, _config, fun) do
     fun.()
-  end
-
-  def child_spec(_repo, opts) do
-    :ecto = opts[:otp_app]
-    "user" = opts[:username]
-    "pass" = opts[:password]
-    "hello" = opts[:database]
-    "local" = opts[:hostname]
-
-    Supervisor.Spec.worker(Task, [fn -> :timer.sleep(:infinity) end])
   end
 
   ## Types
