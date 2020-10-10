@@ -230,7 +230,7 @@ defmodule EctoImmigrant.Migrator do
   end
 
   defp extract_module(file, _name) do
-    modules = Code.load_file(file)
+    modules = Code.require_file(file)
 
     case Enum.find(modules, &is_data_migration_module?/1) do
       {mod, _bin} -> mod
@@ -262,7 +262,7 @@ defmodule EctoImmigrant.Migrator do
         The full error report is shown below.
         """)
 
-        reraise error, System.stacktrace()
+        reraise error, __STACKTRACE__
     end
   end
 
