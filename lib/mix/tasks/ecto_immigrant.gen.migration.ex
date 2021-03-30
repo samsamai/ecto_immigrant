@@ -85,6 +85,10 @@ defmodule Mix.Tasks.EctoImmigrant.Gen.Migration do
     def up do
   <%= @change %>
     end
+
+    def down do
+  <%= @change %>
+    end
   end
   """)
 end
