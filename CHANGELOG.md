@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.0
+
+- Rollback functionality added
+
 ## v0.2.0
 
 - Update to work with ecto 3
