@@ -10,12 +10,17 @@ defmodule EctoImmigrant.Migrator do
         alias MyApp.Person
 
         def up do
-          Repo.insert(%Person{first_name: "John", last_name: "Doe", age: 78})
+          Repo.insert(%Person{id: 123, first_name: "John", last_name: "Doe", age: 78})
+        end
+
+        def down do
+          Repo.delete(%Person{id: 123, first_name: "John", last_name: "Doe", age: 78})
         end
 
       end
 
       EctoImmigrant.Migrator.up(Repo, 20080906120000, MyApp.MigrationExample)
+      EctoImmigrant.Migrator.down(Repo, 20080906120000, MyApp.MigrationExample)
 
   """
 
@@ -78,6 +83,32 @@ defmodule EctoImmigrant.Migrator do
     end)
   end
 
+  @doc """
+  Reverts an applied data migration on the given repository.
+  """
+  @spec up(Ecto.Repo.t(), integer, module, Keyword.t()) :: :ok | :already_down
+  def down(repo, version, module, opts \\ []) do
+    versions = migrated_versions(repo, opts)
+
+    if version in versions do
+      do_down(repo, version, module, opts)
+    else
+      :already_down
+    end
+  end
+
+  defp do_down(repo, version, module, opts) do
+    run_maybe_in_transaction(repo, module, fn ->
+      attempt(repo, version, module, :forward, :down, :down, opts) ||
+        raise EctoImmigrant.MigrationError,
+              "#{inspect(module)} does not implement a `down/0` function"
+
+      verbose_data_migration(repo, "reverts data migrations", fn ->
+        DataMigration.down(repo, version, opts[:prefix])
+      end)
+    end)
+  end
+
   defp run_maybe_in_transaction(repo, module, fun) do
     cond do
       module.__data_migration__[:disable_ddl_transaction] ->
@@ -122,10 +153,18 @@ defmodule EctoImmigrant.Migrator do
   def run(repo, migration_source, direction, opts) do
     versions = migrated_versions(repo, opts)
 
-    if opts[:all] do
-      run_all(repo, versions, migration_source, direction, opts)
-    else
-      raise ArgumentError, "expected :all strategy"
+    cond do
+      opts[:all] ->
+        run_all(repo, versions, migration_source, direction, opts)
+
+      to = opts[:to] ->
+        run_to(repo, versions, migration_source, direction, to)
+
+      step = opts[:step] ->
+        run_step(repo, versions, migration_source, direction, step)
+
+      true ->
+        raise ArgumentError, "expected :all, :step or :to strategy"
     end
   end
 
@@ -148,6 +187,26 @@ defmodule EctoImmigrant.Migrator do
   defp run_all(repo, versions, migration_source, direction, opts) do
     pending_in_direction(versions, migration_source, direction)
     |> migrate(direction, repo, opts)
+  end
+
+  defp run_to(repo, versions, migration_source, direction, target) do
+    within_target_version? = fn
+      {version, _, _}, target, :up ->
+        version <= target
+
+      {version, _, _}, target, :down ->
+        version >= target
+    end
+
+    pending_in_direction(versions, migration_source, direction)
+    |> Enum.take_while(&within_target_version?.(&1, target, direction))
+    |> migrate(direction, repo, [])
+  end
+
+  defp run_step(repo, versions, migration_source, direction, count) do
+    pending_in_direction(versions, migration_source, direction)
+    |> Enum.take(count)
+    |> migrate(direction, repo, [])
   end
 
   defp pending_in_direction(versions, migration_source, :up) do
@@ -202,6 +261,7 @@ defmodule EctoImmigrant.Migrator do
 
       case direction do
         :up -> do_up(repo, version, mod, opts)
+        :down -> do_down(repo, version, mod, opts)
       end
 
       version
@@ -232,7 +292,7 @@ defmodule EctoImmigrant.Migrator do
   end
 
   defp extract_module(file, _name) do
-    modules = Code.require_file(file)
+    modules = Code.compile_file(file)
 
     case Enum.find(modules, &is_data_migration_module?/1) do
       {mod, _bin} -> mod
