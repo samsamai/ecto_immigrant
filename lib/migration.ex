@@ -14,16 +14,22 @@ defmodule EctoImmigrant.Migration do
         alias ExampleApp.Person
 
         def up do
-          Repo.insert(%Person{first_name: "John", last_name: "Doe", age: 78})
+          Repo.insert(%Person{id: 123, first_name: "John", last_name: "Doe", age: 78})
+        end
+
+        def down do
+          Repo.delete(%Person{id: 123, first_name: "John", last_name: "Doe", age: 78})
         end
       end
 
-  Note data migrations have only an `up/0`, which is used to update your data.
+  Note data migrations have an `up/0` and `down/0`, which is used to update your data
+  and reverts the updated data, respectively.
 
   EctoImmigrant provides some mix tasks to help developers work with migrations:
 
     * `mix ecto_immigrant.gen.migration` # Generates a new data migration for the repo
     * `mix ecto_immigrant.migrate`       # Runs the repository data migrations
+    * `mix ecto_immigrant.rollback`      # Reverts applied data migrations from the repository
     * `mix ecto_immigrant.migrations`    # Displays the repository data migration status
 
   Run the `mix help COMMAND` for more information.
@@ -46,7 +52,11 @@ defmodule EctoImmigrant.Migration do
         alias ExampleApp.Person
 
         def up do
-          Repo.insert(%Person{first_name: "John", last_name: "Doe", age: 78})
+          Repo.insert(%Person{id: 123, first_name: "John", last_name: "Doe", age: 78})
+        end
+
+        def down do
+          Repo.delete(%Person{id: 123, first_name: "John", last_name: "Doe", age: 78})
         end
       end
 
