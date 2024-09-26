@@ -11,7 +11,8 @@ defmodule EctoImmigrant.DataMigration do
     timestamps(updated_at: false)
   end
 
-  @opts [timeout: :infinity, log: false]
+  # the schema migration flag is a signal to the repo that we are in a migration operation
+  @opts [timeout: :infinity, log: false, schema_migration: true]
 
   def ensure_data_migrations_table!(repo, prefix) do
     adapter = repo.__adapter__

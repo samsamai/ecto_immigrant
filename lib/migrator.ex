@@ -115,7 +115,7 @@ defmodule EctoImmigrant.Migrator do
         fun.()
 
       repo.__adapter__.supports_ddl_transaction? ->
-        repo.transaction(fun, log: false, timeout: :infinity)
+        repo.transaction(fun, log: false, timeout: :infinity, schema_migration: true)
 
       true ->
         fun.()
