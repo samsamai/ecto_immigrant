@@ -15,7 +15,7 @@ defmodule EctoImmigrant.DataMigration do
   @opts [timeout: :infinity, log: false, schema_migration: true]
 
   def ensure_data_migrations_table!(repo, prefix) do
-    adapter = repo.__adapter__
+    adapter = repo.__adapter__()
     create_data_migrations_table(adapter, repo, prefix)
   end
 
@@ -38,7 +38,7 @@ defmodule EctoImmigrant.DataMigration do
   end
 
   def get_source(repo) do
-    Keyword.get(repo.config, :data_migration_source, "data_migrations")
+    Keyword.get(repo.config(), :data_migration_source, "data_migrations")
   end
 
   defp create_data_migrations_table(adapter, repo, prefix) do

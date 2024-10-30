@@ -21,6 +21,9 @@ defmodule EctoImmigrant.TestAdapter do
   end
 
   @impl Ecto.Adapter
+  def checked_out?(_adapter_meta), do: raise("not implemented")
+
+  @impl Ecto.Adapter
   def checkout(_adapter_meta, _config, fun) do
     fun.()
   end
@@ -78,7 +81,16 @@ defmodule EctoImmigrant.TestAdapter do
   ## Schema
 
   @impl Ecto.Adapter.Schema
-  def insert_all(_repo, %{source: source}, _header, rows, _on_conflict, _returning, _opts) do
+  def insert_all(
+        _repo,
+        %{source: source},
+        _header,
+        rows,
+        _on_conflict,
+        _returning,
+        _placeholders,
+        _opts
+      ) do
     send(self(), {:insert_all, source, rows})
     {1, nil}
   end
@@ -105,7 +117,7 @@ defmodule EctoImmigrant.TestAdapter do
     do: res
 
   @impl Ecto.Adapter.Schema
-  def delete(_repo, meta, _filter, _opts),
+  def delete(_repo, meta, _filter, _returing, _opts),
     do: send(self(), {:delete, meta.source}) && {:ok, []}
 
   ## Transactions
