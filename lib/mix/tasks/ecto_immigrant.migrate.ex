@@ -36,7 +36,7 @@ defmodule Mix.Tasks.EctoImmigrant.Migrate do
       Mix.Task.run("app.start")
       repo.start_link(opts)
 
-      pool = repo.config[:pool]
+      pool = repo.config()[:pool]
 
       if function_exported?(pool, :unboxed_run, 2) do
         pool.unboxed_run(repo, fn -> migrator.(repo, data_migrations_path(repo), :up, opts) end)

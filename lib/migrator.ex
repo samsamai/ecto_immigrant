@@ -111,11 +111,11 @@ defmodule EctoImmigrant.Migrator do
 
   defp run_maybe_in_transaction(repo, module, fun) do
     cond do
-      module.__data_migration__[:disable_ddl_transaction] ->
+      module.__data_migration__()[:disable_ddl_transaction] ->
         fun.()
 
-      repo.__adapter__.supports_ddl_transaction? ->
-        repo.transaction(fun, log: false, timeout: :infinity)
+      repo.__adapter__().supports_ddl_transaction?() ->
+        repo.transaction(fun, log: false, timeout: :infinity, schema_migration: true)
 
       true ->
         fun.()
@@ -211,7 +211,7 @@ defmodule EctoImmigrant.Migrator do
 
   defp pending_in_direction(versions, migration_source, :up) do
     migrations_for(migration_source)
-    |> Enum.filter(fn {version, _name, _file} -> not (version in versions) end)
+    |> Enum.filter(fn {version, _name, _file} -> version not in versions end)
   end
 
   defp pending_in_direction(versions, migration_source, :down) do
@@ -318,7 +318,7 @@ defmodule EctoImmigrant.Migrator do
         "mix ecto.create". Alternatively you may configure Ecto to use
         another table for managing data migrations:
 
-            config #{inspect(repo.config[:otp_app])}, #{inspect(repo)},
+            config #{inspect(repo.config()[:otp_app])}, #{inspect(repo)},
               migration_source: "some_other_table_for_data_migrations"
 
         The full error report is shown below.
